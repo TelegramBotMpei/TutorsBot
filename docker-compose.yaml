@@ -1,0 +1,22 @@
+version: "2.4"
+
+services:
+  telegram_bot_mpei:
+    build: ./
+    command: ./wait-for-postgres.sh db ./telegram_bot_mpei
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  db:
+    restart: always
+    image: postgres:13.3
+    volumes:
+      - ./.database/postgres/data:/var/lib/postgresql/data
+    environment:
+        # TODO: this is not safe. Must be env_vars
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5433:5432"
