@@ -3,10 +3,9 @@ package repository
 import (
 	"context"
 	"github.com/TelegramBotMPEI/internal/models"
-	"github.com/TelegramBotMPEI/internal/utils"
 )
 
-func (d *postgresDB) CreateTutor(ctx context.Context, tutor *models.Tutor, password string) (int, error) {
+func (d *postgresDB) CreateTutor(ctx context.Context, tutor *models.Tutor) (int, error) {
 	const query = `
 		insert into tutors
 		(
@@ -19,15 +18,8 @@ func (d *postgresDB) CreateTutor(ctx context.Context, tutor *models.Tutor, passw
 		returning student_id;
 	`
 
-	salt := utils.GenerateRandomSalt(10) // TODO: MAYBE its configure parametr?
-
-	passwordHash, err := utils.HashPassword(password + salt)
-	if err != nil {
-		return -1, err
-	}
-
-	err = d.pool.QueryRow(ctx, query, tutor.Name, tutor.Surname,
-		passwordHash, salt, tutor.Email, tutor.Phone, tutor.IsFreePlaces).Scan(&tutor.ID)
+	err := d.pool.QueryRow(ctx, query, tutor.Name, tutor.Surname,
+		tutor.PasswordHash, tutor.Salt, tutor.Email, tutor.Phone, tutor.IsFreePlaces).Scan(&tutor.ID)
 
 	return tutor.ID, err
 }

@@ -6,14 +6,14 @@ import (
 )
 
 type StudentRepo interface {
-	CreateStudent(ctx context.Context, student *models.Student, password string) (int, error)
+	CreateStudent(ctx context.Context, student *models.Student) (int, error)
 	ReadStudent(ctx context.Context, id int) (*models.Student, error)
 	UpdateStudent(ctx context.Context, student *models.Student) error
 	DeleteStudent(ctx context.Context, student *models.Student) error
 }
 
 type TutorRepo interface {
-	CreateTutor(ctx context.Context, tutor *models.Tutor, password string) (int, error)
+	CreateTutor(ctx context.Context, tutor *models.Tutor) (int, error)
 	ReadTutor(ctx context.Context, id int) (*models.Tutor, error)
 	UpdateTutor(ctx context.Context, tutor *models.Tutor) error
 	DeleteTutor(ctx context.Context, tutor *models.Tutor) error
