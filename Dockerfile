@@ -12,7 +12,8 @@ RUN apt-get update \
 RUN chmod +x wait-for-postgres.sh
 
 # build go up
-RUN go mod download \
+RUN go mod tidy \
+    && go mod download \
     && go build -o telegram_bot_mpei ./cmd/main.go
 
 
