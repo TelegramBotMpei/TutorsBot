@@ -12,6 +12,7 @@
 export POSTGRES_USER=postgres # любое значение пользователя
 export POSTGRES_PASSWORD=postgres # любое значение пароля
 export POSTGRES_DB=postgres # любое значение имени базы данных
+export POSTGRES_PORT=5432 # порт, на котором будет запускаться база данных
 ```
 
 Для запуска проекта используется Docker
@@ -23,7 +24,7 @@ make up # запустить проект
 
 Дополнительные команды
 ```shell
-make test # запускает тесты
+make tests # запускает тесты
 make migrate # запускает миграции
 ```
 
