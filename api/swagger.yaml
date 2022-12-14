@@ -1,0 +1,199 @@
+openapi: 3.0.0
+info:
+  title: Телеграм Бот для работы с научными группами
+  version: 0.0.1
+servers:
+- url: http://localhost:8000/api/v1
+  description: DevServer
+paths:
+  /user/signUp:
+    post:
+      tags:
+      - Sign in and sign up
+      summary: Метод для авторизации пользователя
+      operationId: signUpUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "201":
+          description: Пользователь был успешно авторизован
+        "401":
+          description: "Пароль не удовлетворяет требованиям, необходимо написать п\
+            ароль, удовлетворяющий требованиям"
+  /user/signIn:
+    post:
+      tags:
+      - Sign in and sign up
+      summary: Метод для входа в систему (аутентификации) уже созданного пользователя
+      operationId: signInUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        "200":
+          description: Аутнетификация прошла успешно.
+        "401":
+          description: Неправильное имя пользователя или пароль
+  /FindTutorByScientificInterest/{scientific_interest}:
+    get:
+      tags:
+      - Find tutors
+      summary: Поиск преподователя по научным интересам
+      operationId: findTutorByScientificInterest
+      parameters:
+      - name: scientific_interest
+        in: path
+        description: Научный интерес
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: Sparh
+      responses:
+        "200":
+          description: Список преподователей с их научным интересами
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tutors'
+        "404":
+          description: Нет найденных научных интересов
+  /FindTutorHasFreePlaces:
+    get:
+      tags:
+      - Find tutors
+      summary: Поиск преподователей у которых есть свободны места
+      operationId: findTutorHasFreePlaces
+      responses:
+        "200":
+          description: Список преподователей со свободными местами
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tutors'
+        "404":
+          description: Нет преподавателей со свободными местами:(
+components:
+  schemas:
+    User:
+      required:
+      - password_hash
+      - role_id
+      - salt
+      - user_id
+      type: object
+      properties:
+        user_id:
+          type: integer
+          description: Id пользователя
+          example: 1
+        role_id:
+          type: integer
+          description: Id в ролевой системе (студент или преподователь)
+          example: 1
+        password_hash:
+          type: string
+          description: Hash пароля
+          example: 5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5
+        salt:
+          type: string
+          description: Соль пароля
+          example: dvf821cdj3281
+    Student:
+      required:
+      - name
+      - surname
+      - user_id
+      type: object
+      properties:
+        student_id:
+          type: integer
+          description: Id студента
+          example: 1
+        tutor_id:
+          type: integer
+          description: Id его научного руководителя
+          example: 1
+        name:
+          type: string
+          description: Имя студента
+          example: Ivan
+        surname:
+          type: string
+          description: Фамилия студента
+          example: Ivanov
+        course:
+          type: integer
+          description: Курс студента
+          example: 3
+        course_work_subject:
+          type: string
+          description: Тема курсовой работы студента
+          example: SLAM algorithms in lidar clouds
+        diploma_work_sublect:
+          type: string
+          description: Тема дипломной работы студента
+          example: Very hard subject
+        user_id:
+          type: integer
+          description: Id как пользователя
+          example: 1
+    Tutor:
+      required:
+      - name
+      - surname
+      - user_id
+      type: object
+      properties:
+        tutor_id:
+          type: integer
+          description: Идентификатор преподавателя
+          example: 1
+        name:
+          type: string
+          description: Имя преподавателя
+          example: Ivan
+        surname:
+          type: string
+          description: Фамилия преподавателя
+          example: Ivanov
+        phone:
+          type: string
+          description: "Телефон преподавателя для того, чтобы ему можно было позво\
+            нить"
+          example: +7962132314
+        email:
+          type: string
+          description: Почта преподавателя
+          example: something@mpei.ru
+        has_free_places:
+          type: boolean
+          description: Есть ли свободные места
+          example: true
+        scientific_interests:
+          type: array
+          description: Научные интересы преподавателя
+          example: MachineLearning
+          items:
+            type: string
+      description: Преподователь тип
+      example:
+        tutor_id: 1
+        phone: +7962132314
+        surname: Ivanov
+        has_free_places: true
+        name: Ivan
+        scientific_interests: MachineLearning
+        email: something@mpei.ru
+    Tutors:
+      type: array
+      items:
+        $ref: '#/components/schemas/Tutor'
+      x-schema-name: Tutors
